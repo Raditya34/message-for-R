@@ -1,0 +1,1323 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Surat Dari Semesta</title>
+
+    <!-- ==============================
+       GOOGLE FONTS
+  ================================ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Poppins:wght@300;400&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* ==============================
+       CSS RESET & ROOT VARIABLES
+    ================================ */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --deep-space: #030010;
+        --nebula-dark: #0a0020;
+        --nebula-mid: #120038;
+        --nebula-purple: #1a0050;
+        --accent-pink: #ff6eb4;
+        --accent-violet: #b084ff;
+        --accent-cyan: #7df9e8;
+        --star-white: #e8e0ff;
+        --glass-bg: rgba(255, 255, 255, 0.04);
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --glass-shadow: rgba(176, 132, 255, 0.15);
+        --text-primary: #f0e8ff;
+        --text-muted: #9b8ab8;
+        --glow-pink:
+          0 0 20px rgba(255, 110, 180, 0.6), 0 0 60px rgba(255, 110, 180, 0.2);
+        --glow-violet:
+          0 0 20px rgba(176, 132, 255, 0.7), 0 0 60px rgba(176, 132, 255, 0.25);
+        --glow-soft: 0 0 40px rgba(176, 132, 255, 0.15);
+      }
+
+      /* ==============================
+       SCROLLBAR STYLING
+    ================================ */
+      ::-webkit-scrollbar {
+        width: 4px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--deep-space);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--accent-violet);
+        border-radius: 2px;
+      }
+
+      /* ==============================
+       BASE BODY & CANVAS BACKGROUND
+    ================================ */
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: var(--deep-space);
+        color: var(--text-primary);
+        min-height: 100vh;
+        overflow-x: hidden;
+        position: relative;
+      }
+
+      /* ==============================
+       CANVAS STAR LAYER
+    ================================ */
+      #starCanvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      /* ==============================
+       NEBULA GRADIENT BLOBS (CSS-only)
+    ================================ */
+      .nebula-blob {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(120px);
+        opacity: 0.18;
+        pointer-events: none;
+        z-index: 0;
+        animation: drift 20s ease-in-out infinite alternate;
+      }
+      .nebula-blob.b1 {
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, #6a00c8 0%, transparent 70%);
+        top: -150px;
+        left: -150px;
+        animation-duration: 25s;
+      }
+      .nebula-blob.b2 {
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, #c800a0 0%, transparent 70%);
+        top: 30%;
+        right: -100px;
+        animation-duration: 30s;
+        animation-delay: -8s;
+      }
+      .nebula-blob.b3 {
+        width: 450px;
+        height: 450px;
+        background: radial-gradient(circle, #003fa0 0%, transparent 70%);
+        bottom: -100px;
+        left: 30%;
+        animation-duration: 22s;
+        animation-delay: -4s;
+      }
+
+      @keyframes drift {
+        0% {
+          transform: translate(0, 0) scale(1);
+        }
+        50% {
+          transform: translate(30px, -40px) scale(1.05);
+        }
+        100% {
+          transform: translate(-20px, 30px) scale(0.97);
+        }
+      }
+
+      /* ==============================
+       MAIN CONTENT WRAPPER
+    ================================ */
+      .page-wrapper {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0 20px 80px;
+      }
+
+      /* ==============================
+       MUSIC PLAYER BUTTON (Top-right)
+    ================================ */
+      .music-btn {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 100;
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 50px;
+        padding: 10px 18px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: var(--text-primary);
+        font-family: "Poppins", sans-serif;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+      }
+      .music-btn:hover {
+        background: rgba(176, 132, 255, 0.15);
+        border-color: var(--accent-violet);
+        box-shadow: var(--glow-violet);
+      }
+      .music-btn .icon {
+        font-size: 1rem;
+        transition: transform 0.3s ease;
+      }
+      .music-btn.playing .icon {
+        animation: spin 3s linear infinite;
+      }
+      .music-btn .label {
+        white-space: nowrap;
+      }
+
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* ==============================
+       HERO SECTION
+    ================================ */
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 100px 20px 60px;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      /* Floating decorative orb above title */
+      .hero-orb {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 35% 35%,
+          #e8b4ff 0%,
+          #b084ff 40%,
+          #6a00c8 100%
+        );
+        box-shadow:
+          0 0 40px rgba(176, 132, 255, 0.8),
+          0 0 80px rgba(176, 132, 255, 0.4);
+        margin-bottom: 32px;
+        animation: floatOrb 6s ease-in-out infinite;
+      }
+      @keyframes floatOrb {
+        0%,
+        100% {
+          transform: translateY(0) scale(1);
+        }
+        50% {
+          transform: translateY(-16px) scale(1.05);
+        }
+      }
+
+      .hero-eyebrow {
+        font-family: "Poppins", sans-serif;
+        font-size: 0.7rem;
+        font-weight: 300;
+        letter-spacing: 0.4em;
+        text-transform: uppercase;
+        color: var(--accent-cyan);
+        margin-bottom: 20px;
+        opacity: 0;
+        animation: fadeUp 1s ease forwards 0.3s;
+      }
+
+      .hero-title {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(2.2rem, 5vw, 4rem);
+        font-weight: 700;
+        line-height: 1.2;
+        color: var(--star-white);
+        text-shadow: var(--glow-violet);
+        margin-bottom: 24px;
+        opacity: 0;
+        animation: fadeUp 1s ease forwards 0.6s;
+      }
+      .hero-title em {
+        font-style: italic;
+        color: var(--accent-pink);
+        text-shadow: var(--glow-pink);
+      }
+
+      .hero-subtitle {
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(1.05rem, 2.5vw, 1.3rem);
+        font-weight: 300;
+        font-style: italic;
+        color: var(--text-muted);
+        line-height: 1.8;
+        max-width: 560px;
+        opacity: 0;
+        animation: fadeUp 1s ease forwards 0.9s;
+      }
+
+      /* Divider line with glow */
+      .divider {
+        width: 80px;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--accent-violet),
+          transparent
+        );
+        margin: 40px auto;
+        opacity: 0;
+        animation: fadeUp 1s ease forwards 1.1s;
+      }
+
+      .hero-cta-text {
+        font-size: 0.78rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 12px;
+        opacity: 0;
+        animation: fadeUp 1s ease forwards 1.3s;
+      }
+
+      /* Scroll indicator arrow */
+      .scroll-hint {
+        margin-top: 50px;
+        opacity: 0;
+        animation: fadeUp 1s ease forwards 1.5s;
+      }
+      .scroll-hint span {
+        display: block;
+        width: 20px;
+        height: 20px;
+        border-right: 1.5px solid var(--accent-violet);
+        border-bottom: 1.5px solid var(--accent-violet);
+        transform: rotate(45deg);
+        margin: 0 auto;
+        animation: bounce 2s ease-in-out infinite;
+      }
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: rotate(45deg) translate(0, 0);
+          opacity: 0.4;
+        }
+        50% {
+          transform: rotate(45deg) translate(5px, 5px);
+          opacity: 1;
+        }
+      }
+
+      /* ==============================
+       GLASSMORPHISM CARD BASE
+    ================================ */
+      .glass-card {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 24px;
+        box-shadow:
+          0 8px 32px var(--glass-shadow),
+          inset 0 1px 0 rgba(255, 255, 255, 0.07);
+        padding: 40px;
+        width: 100%;
+        max-width: 720px;
+        margin: 0 auto 60px;
+        transition: box-shadow 0.4s ease;
+      }
+      .glass-card:hover {
+        box-shadow:
+          0 8px 48px rgba(176, 132, 255, 0.22),
+          inset 0 1px 0 rgba(255, 255, 255, 0.09);
+      }
+
+      /* ==============================
+       SECTION LABEL
+    ================================ */
+      .section-label {
+        font-size: 0.65rem;
+        letter-spacing: 0.35em;
+        text-transform: uppercase;
+        color: var(--accent-cyan);
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .section-label::before,
+      .section-label::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--accent-cyan));
+      }
+      .section-label::after {
+        background: linear-gradient(90deg, var(--accent-cyan), transparent);
+      }
+
+      /* ==============================
+       QUOTE GENERATOR SECTION
+    ================================ */
+      .quote-section {
+        text-align: center;
+      }
+
+      #quote-display {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(1.1rem, 3vw, 1.5rem);
+        font-style: italic;
+        line-height: 1.75;
+        color: var(--star-white);
+        min-height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          opacity 0.5s ease,
+          transform 0.5s ease;
+        padding: 0 8px;
+      }
+      #quote-display.fade-out {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+      #quote-display.fade-in {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      #quote-author {
+        font-family: "Poppins", sans-serif;
+        font-size: 0.75rem;
+        letter-spacing: 0.15em;
+        color: var(--accent-pink);
+        margin-top: 20px;
+        opacity: 0;
+        transition: opacity 0.6s ease 0.3s;
+      }
+      #quote-author.visible {
+        opacity: 1;
+      }
+
+      /* The magic button */
+      .reveal-btn {
+        margin-top: 36px;
+        padding: 16px 40px;
+        background: linear-gradient(
+          135deg,
+          rgba(176, 132, 255, 0.15) 0%,
+          rgba(255, 110, 180, 0.1) 100%
+        );
+        border: 1px solid rgba(176, 132, 255, 0.4);
+        border-radius: 50px;
+        color: var(--text-primary);
+        font-family: "Poppins", sans-serif;
+        font-size: 0.85rem;
+        font-weight: 400;
+        letter-spacing: 0.12em;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+      .reveal-btn::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          135deg,
+          rgba(176, 132, 255, 0.25),
+          rgba(255, 110, 180, 0.2)
+        );
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .reveal-btn:hover::before {
+        opacity: 1;
+      }
+      .reveal-btn:hover {
+        border-color: var(--accent-violet);
+        box-shadow:
+          var(--glow-violet),
+          0 4px 24px rgba(255, 110, 180, 0.15);
+        transform: translateY(-2px);
+      }
+      .reveal-btn:active {
+        transform: translateY(0);
+      }
+      .reveal-btn .btn-icon {
+        display: inline-block;
+        margin-right: 8px;
+        font-style: normal;
+        transition: transform 0.3s ease;
+      }
+      .reveal-btn:hover .btn-icon {
+        transform: rotate(20deg) scale(1.2);
+      }
+
+      /* Quote counter pill */
+      .quote-counter {
+        display: inline-block;
+        margin-top: 16px;
+        font-size: 0.65rem;
+        letter-spacing: 0.2em;
+        color: var(--text-muted);
+      }
+
+      /* ==============================
+       AFFIRMATION CARDS GRID
+    ================================ */
+      .affirmation-section {
+        margin-bottom: 60px;
+      }
+
+      .affirmation-section h2 {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+        text-align: center;
+        margin-bottom: 12px;
+        color: var(--star-white);
+        text-shadow: var(--glow-soft);
+      }
+      .affirmation-section p.subhead {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1rem;
+        font-style: italic;
+        color: var(--text-muted);
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        max-width: 720px;
+        margin: 0 auto;
+      }
+
+      .aff-card {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-radius: 20px;
+        padding: 30px 24px;
+        text-align: center;
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease,
+          border-color 0.3s ease;
+        cursor: default;
+      }
+      .aff-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 40px rgba(176, 132, 255, 0.2);
+        border-color: rgba(176, 132, 255, 0.3);
+      }
+      .aff-card .card-icon {
+        font-size: 2rem;
+        margin-bottom: 14px;
+        display: block;
+      }
+      .aff-card .card-title {
+        font-family: "Playfair Display", serif;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--accent-pink);
+        margin-bottom: 10px;
+      }
+      .aff-card .card-text {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 0.92rem;
+        line-height: 1.65;
+        color: var(--text-muted);
+      }
+
+      /* ==============================
+       LETTER SECTION (Personal note)
+    ================================ */
+      .letter-section {
+        text-align: left;
+        position: relative;
+      }
+      .letter-section::before {
+        content: '"';
+        font-family: "Playfair Display", serif;
+        font-size: 10rem;
+        color: rgba(176, 132, 255, 0.07);
+        position: absolute;
+        top: -30px;
+        left: -10px;
+        line-height: 1;
+        pointer-events: none;
+      }
+
+      .letter-greeting {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 0.85rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--accent-cyan);
+        margin-bottom: 20px;
+      }
+
+      .letter-body {
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(1rem, 2.2vw, 1.15rem);
+        line-height: 1.9;
+        color: var(--text-primary);
+        font-weight: 300;
+      }
+      .letter-body p {
+        margin-bottom: 18px;
+      }
+      .letter-body strong {
+        font-weight: 400;
+        color: var(--accent-pink);
+      }
+
+      .letter-sign {
+        margin-top: 30px;
+        font-family: "Playfair Display", serif;
+        font-style: italic;
+        font-size: 1.1rem;
+        color: var(--accent-violet);
+        text-shadow: var(--glow-violet);
+      }
+
+      /* ==============================
+       BREATHING EXERCISE WIDGET
+    ================================ */
+      .breathe-section {
+        text-align: center;
+      }
+      .breathe-section h2 {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(1.4rem, 3vw, 1.9rem);
+        margin-bottom: 8px;
+        color: var(--star-white);
+      }
+      .breathe-section p.subhead {
+        font-family: "Cormorant Garamond", serif;
+        font-style: italic;
+        color: var(--text-muted);
+        margin-bottom: 36px;
+        font-size: 1rem;
+      }
+
+      .breathe-ring-wrap {
+        position: relative;
+        width: 180px;
+        height: 180px;
+        margin: 0 auto 28px;
+      }
+      .breathe-ring {
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        border: 2px solid rgba(176, 132, 255, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+      .breathe-ring::before {
+        content: "";
+        position: absolute;
+        inset: -12px;
+        border-radius: 50%;
+        border: 1px solid rgba(176, 132, 255, 0.1);
+      }
+      .breathe-inner {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(176, 132, 255, 0.3) 0%,
+          rgba(176, 132, 255, 0.05) 70%
+        );
+        border: 1.5px solid rgba(176, 132, 255, 0.35);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          transform 4s ease-in-out,
+          opacity 4s ease-in-out;
+      }
+      .breathe-inner.expand {
+        transform: scale(1.45);
+        opacity: 1;
+        box-shadow: 0 0 40px rgba(176, 132, 255, 0.4);
+      }
+      .breathe-inner.hold {
+        transform: scale(1.45);
+        opacity: 0.9;
+      }
+      .breathe-inner.shrink {
+        transform: scale(1);
+        opacity: 0.5;
+      }
+
+      #breathe-label {
+        font-family: "Poppins", sans-serif;
+        font-size: 0.72rem;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: var(--accent-violet);
+      }
+
+      .breathe-btn {
+        padding: 12px 32px;
+        background: transparent;
+        border: 1px solid rgba(176, 132, 255, 0.35);
+        border-radius: 50px;
+        color: var(--text-muted);
+        font-family: "Poppins", sans-serif;
+        font-size: 0.78rem;
+        letter-spacing: 0.12em;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .breathe-btn:hover {
+        border-color: var(--accent-violet);
+        color: var(--text-primary);
+        box-shadow: var(--glow-soft);
+      }
+
+      /* ==============================
+       FOOTER
+    ================================ */
+      footer {
+        text-align: center;
+        padding: 40px 20px;
+        position: relative;
+        z-index: 1;
+      }
+      footer .footer-orb-row {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 20px;
+      }
+      footer .dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--accent-violet);
+        opacity: 0.4;
+      }
+      footer .dot:nth-child(2) {
+        background: var(--accent-pink);
+        opacity: 0.5;
+      }
+      footer .dot:nth-child(3) {
+        background: var(--accent-cyan);
+        opacity: 0.4;
+      }
+
+      footer p {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 0.9rem;
+        font-style: italic;
+        color: var(--text-muted);
+        line-height: 1.8;
+      }
+      footer .footer-love {
+        color: var(--accent-pink);
+        text-shadow: var(--glow-pink);
+      }
+
+      /* ==============================
+       SCROLL REVEAL ANIMATION
+    ================================ */
+      .reveal {
+        opacity: 0;
+        transform: translateY(30px);
+        transition:
+          opacity 0.8s ease,
+          transform 0.8s ease;
+      }
+      .reveal.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* ==============================
+       KEYFRAMES HELPERS
+    ================================ */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ==============================
+       RESPONSIVE ADJUSTMENTS
+    ================================ */
+      @media (max-width: 600px) {
+        .glass-card {
+          padding: 28px 22px;
+        }
+        .cards-grid {
+          grid-template-columns: 1fr;
+        }
+        .music-btn .label {
+          display: none;
+        }
+        .music-btn {
+          padding: 10px 14px;
+        }
+        .breathe-ring-wrap {
+          width: 150px;
+          height: 150px;
+        }
+        .breathe-ring {
+          width: 150px;
+          height: 150px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ==============================
+       CANVAS: Bintang-bintang bergerak
+  ================================ -->
+    <canvas id="starCanvas"></canvas>
+
+    <!-- ==============================
+       NEBULA BLOBS (Latar kabut)
+  ================================ -->
+    <div class="nebula-blob b1"></div>
+    <div class="nebula-blob b2"></div>
+    <div class="nebula-blob b3"></div>
+
+    <!-- ==============================
+       TOMBOL MUSIK (Pojok kanan atas)
+  ================================ -->
+    <button class="music-btn" id="musicBtn" aria-label="Toggle music">
+      <span class="icon">🎵</span>
+      <span class="label">Musik Semesta</span>
+    </button>
+
+    <!-- Audio Element — gunakan file royalti-free atau ganti URL di bawah -->
+    <audio id="bgMusic" loop>
+      <!-- 
+      Ganti src di bawah dengan file audio lokal (letakkan di folder yang sama)
+      atau URL audio royalti-free. Contoh file lokal: src="music.mp3"
+      Sumber gratis: https://freemusicarchive.org  atau  https://pixabay.com/music/
+    -->
+      <source src="Dunia_Tipu_Tipu.mp3" type="audio/mpeg" />
+      Browser Anda tidak mendukung audio.
+    </audio>
+
+    <!-- ==============================
+       KONTEN UTAMA
+  ================================ -->
+    <div class="page-wrapper">
+      <!-- ===== HERO SECTION ===== -->
+      <section class="hero" aria-label="Pembuka">
+        <!-- Bola cahaya mengambang -->
+        <div class="hero-orb" aria-hidden="true"></div>
+
+        <!-- Label kecil di atas judul -->
+        <p class="hero-eyebrow">✦ Sepucuk surat dari semesta ✦</p>
+
+        <!-- Judul utama dengan efek glow -->
+        <h1 class="hero-title">
+          Di balik gelapnya semesta,<br />
+          <em>kamu adalah bintang<br />yang paling terang</em>
+        </h1>
+
+        <!-- Subjudul / kalimat puitis -->
+        <p class="hero-subtitle">
+          Ketika segalanya terasa berat dan dunia seolah memunggungimu —
+          ingatlah bahwa bahkan bintang pun harus melewati kegelapan malam untuk
+          bisa bersinar paling indah.
+        </p>
+
+        <!-- Garis pembatas elegan -->
+        <div class="divider" aria-hidden="true"></div>
+
+        <!-- Petunjuk scroll -->
+        <div class="scroll-hint" aria-label="Gulir ke bawah">
+          <span aria-hidden="true"></span>
+        </div>
+      </section>
+
+      <!-- ===== QUOTE GENERATOR SECTION ===== -->
+      <div class="glass-card quote-section reveal" aria-live="polite">
+        <!-- Label seksi -->
+        <div class="section-label">✦ Pesan Rahasia Semesta ✦</div>
+
+        <!-- Area tampilan kutipan -->
+        <div id="quote-display" class="fade-in">
+          Tekan tombol di bawah, dan biarkan semesta berbisik kepadamu...
+        </div>
+
+        <!-- Penulis kutipan -->
+        <div id="quote-author">— Semesta</div>
+
+        <!-- Tombol ajaib -->
+        <div>
+          <button class="reveal-btn" id="quoteBtn" onclick="showQuote()">
+            <em class="btn-icon">✨</em> Tampilkan Pesan Untukku
+          </button>
+        </div>
+
+        <!-- Penghitung kutipan yang sudah dibuka -->
+        <div class="quote-counter" id="quoteCounter"></div>
+      </div>
+
+      <!-- ===== AFFIRMATION CARDS ===== -->
+      <section class="affirmation-section reveal" aria-label="Afirmasi">
+        <h2>Hal yang Perlu Kamu Ingat</h2>
+        <p class="subhead">Ketika dirimu terasa tidak cukup, ingatlah ini...</p>
+
+        <div class="cards-grid">
+          <div class="aff-card">
+            <span class="card-icon">🌙</span>
+            <div class="card-title">Kamu Tidak Sendiri</div>
+            <p class="card-text">
+              Bulan juga pernah hilang di balik awan, namun ia selalu kembali
+              menerangi malam.
+            </p>
+          </div>
+
+          <div class="aff-card">
+            <span class="card-icon">🌊</span>
+            <div class="card-title">Ini Pun Berlalu</div>
+            <p class="card-text">
+              Seperti ombak yang datang dan pergi, rasa sakitmu tidak akan
+              selamanya tinggal.
+            </p>
+          </div>
+
+          <div class="aff-card">
+            <span class="card-icon">🌸</span>
+            <div class="card-title">Kamu Berharga</div>
+            <p class="card-text">
+              Bunga yang layu di musim dingin tidak kehilangan nilainya — ia
+              sedang menyimpan energi untuk mekar lebih indah.
+            </p>
+          </div>
+
+          <div class="aff-card">
+            <span class="card-icon">⚡</span>
+            <div class="card-title">Kamu Kuat</div>
+            <p class="card-text">
+              Petir lahir dari gesekan awan. Kekuatanmu lahir dari setiap ujian
+              yang telah kamu hadapi.
+            </p>
+          </div>
+
+          <div class="aff-card">
+            <span class="card-icon">🦋</span>
+            <div class="card-title">Sedang Berubah</div>
+            <p class="card-text">
+              Ulat tidak tahu ia akan menjadi kupu-kupu. Namun ia mempercayai
+              prosesnya. Percayalah milikmu.
+            </p>
+          </div>
+
+          <div class="aff-card">
+            <span class="card-icon">🌟</span>
+            <div class="card-title">Cahayamu Nyata</div>
+            <p class="card-text">
+              Bintang tidak berhenti bersinar hanya karena matahari belum
+              terbenam. Cahayamu nyata, meski belum semua bisa melihatnya.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SURAT UNTUK DIRIMU ===== -->
+      <div
+        class="glass-card letter-section reveal"
+        aria-label="Surat dari semesta"
+      >
+        <div class="section-label">✦ Untuk Kamu ✦</div>
+
+        <p class="letter-greeting">Kepada jiwa yang sedang berjuang,</p>
+
+        <div class="letter-body">
+          <p>
+            Aku tahu belakangan ini tidaklah mudah. Ada hari-hari di mana bahkan
+            bangkit dari tempat tidur pun terasa seperti pendakian gunung.
+            <strong>Dan untuk itu — aku bangga padamu.</strong>
+          </p>
+          <p>
+            Kamu tidak perlu menjadi sempurna. Kamu tidak perlu punya semua
+            jawaban. Kamu hanya perlu menjadi <strong>dirimu sendiri</strong>,
+            hari ini, dalam bentuk yang paling jujur.
+          </p>
+          <p>
+            Semesta tidak pernah membuat bintang tanpa melewati ledakan yang
+            dahsyat terlebih dahulu. Perihmu bukan tanda bahwa kamu lemah — ia
+            adalah tanda bahwa
+            <strong>sesuatu yang indah sedang terbentuk.</strong>
+          </p>
+          <p>
+            Jadi jika hari ini kamu butuh berhenti sejenak, berhentilah. Jika
+            kamu butuh menangis, menangislah. Dan ketika kamu siap, semesta akan
+            ada di sini — <strong>menunggumu untuk bangkit kembali.</strong>
+          </p>
+        </div>
+
+        <div class="letter-sign">Dengan seluruh cinta, — Semesta 🌌</div>
+      </div>
+
+      <!-- ===== LATIHAN PERNAPASAN ===== -->
+      <div
+        class="glass-card breathe-section reveal"
+        aria-label="Latihan pernapasan"
+      >
+        <div class="section-label">✦ Sejenak Bernapas ✦</div>
+        <h2>Tenangkan Dirimu</h2>
+        <p class="subhead">Ikuti ritme ini bersama semesta...</p>
+
+        <!-- Cincin animasi napas -->
+        <div class="breathe-ring-wrap" aria-hidden="true">
+          <div class="breathe-ring">
+            <div class="breathe-inner" id="breatheInner">
+              <span id="breathe-label">Mulai</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tombol mulai latihan napas -->
+        <button class="breathe-btn" id="breatheBtn" onclick="toggleBreathe()">
+          Mulai Bernapas Bersama
+        </button>
+      </div>
+
+      <!-- ===== FOOTER ===== -->
+      <footer>
+        <div class="footer-orb-row" aria-hidden="true">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+        <p>
+          Dibuat dengan <span class="footer-love">✦ cinta ✦</span> dari sudut
+          semesta.<br />
+          Kamu sudah sejauh ini — itu saja sudah luar biasa.
+        </p>
+      </footer>
+    </div>
+    <!-- end .page-wrapper -->
+
+    <!-- ==============================
+       JAVASCRIPT
+  ================================ -->
+    <script>
+      /* ============================================================
+       1. CANVAS BINTANG — Twinkling Star Field
+    ============================================================ */
+      (function () {
+        const canvas = document.getElementById("starCanvas");
+        const ctx = canvas.getContext("2d");
+        let W,
+          H,
+          stars = [];
+
+        /* Inisialisasi ukuran canvas */
+        function resize() {
+          W = canvas.width = window.innerWidth;
+          H = canvas.height = window.innerHeight;
+        }
+        window.addEventListener("resize", resize);
+        resize();
+
+        /* Buat sejumlah bintang acak */
+        function createStars(count) {
+          stars = [];
+          for (let i = 0; i < count; i++) {
+            stars.push({
+              x: Math.random() * W,
+              y: Math.random() * H,
+              r: Math.random() * 1.5 + 0.3, // radius
+              alpha: Math.random(), // kecerahan awal
+              speed: Math.random() * 0.008 + 0.002, // kecepatan kedip
+              dir: Math.random() > 0.5 ? 1 : -1, // arah kedip
+              drift: (Math.random() - 0.5) * 0.08, // gerak horizontal pelan
+            });
+          }
+        }
+        createStars(280);
+
+        /* Loop animasi */
+        function animate() {
+          ctx.clearRect(0, 0, W, H);
+
+          stars.forEach((s) => {
+            /* Update kecerahan (twinkling) */
+            s.alpha += s.speed * s.dir;
+            if (s.alpha >= 1) {
+              s.alpha = 1;
+              s.dir = -1;
+            }
+            if (s.alpha <= 0.1) {
+              s.alpha = 0.1;
+              s.dir = 1;
+            }
+
+            /* Gerak melayang pelan */
+            s.x += s.drift;
+            if (s.x < 0) s.x = W;
+            if (s.x > W) s.x = 0;
+
+            /* Gambar bintang */
+            ctx.save();
+            ctx.globalAlpha = s.alpha;
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+
+            /* Warna bintang bervariasi (putih / ungu muda / pink muda) */
+            const colors = ["#ffffff", "#e0d0ff", "#ffd0f0", "#c8f0ff"];
+            ctx.fillStyle = colors[Math.floor(s.r * 2) % colors.length];
+            ctx.fill();
+
+            /* Efek glow pada bintang yang lebih besar */
+            if (s.r > 1.2) {
+              ctx.shadowColor = "#b084ff";
+              ctx.shadowBlur = 6;
+              ctx.fill();
+            }
+
+            ctx.restore();
+          });
+
+          requestAnimationFrame(animate);
+        }
+        animate();
+
+        /* Buat ulang bintang jika jendela diresize besar */
+        window.addEventListener("resize", () => createStars(280));
+      })();
+
+      /* ============================================================
+       2. RANDOM QUOTE GENERATOR — Pesan Rahasia Semesta
+    ============================================================ */
+      const quotes = [
+        {
+          text: "Kamu tidak harus kuat setiap saat. Bahkan berlian pun melewati tekanan yang luar biasa sebelum menjadi seindah ini — dan kamu jauh lebih berharga dari berlian manapun.",
+          author: "— Bisikan Semesta",
+        },
+        {
+          text: "Luka yang kamu rasakan hari ini sedang mengukir ruang dalam dirimu — ruang yang cukup luas untuk menampung kebahagiaan yang lebih besar yang sedang dalam perjalanan menujumu.",
+          author: "— Dari Bintang yang Menyayangimu",
+        },
+        {
+          text: "Kamu tahu tidak? Di antara miliaran jiwa di galaksi ini, hanya ada satu kamu. Satu. Tidak ada duplikat. Tidak ada versi lain. Keunikanmu adalah keajaiban itu sendiri.",
+          author: "— Semesta, Kepadamu",
+        },
+        {
+          text: "Malam yang paling gelap selalu datang tepat sebelum fajar yang paling indah. Bertahanlah — fajarmu sedang berjalan kaki menuju harimu.",
+          author: "— Janji Semesta",
+        },
+        {
+          text: "Kamu tidak perlu menjadi sempurna untuk menjadi dicintai. Bunga liar pun tumbuh di retakan batu — dan tetap menjadi bunga yang paling berani.",
+          author: "— Catatan dari Antariksa",
+        },
+        {
+          text: "Setiap air mata yang jatuh hari ini adalah pupuk bagi versi terbaik dirimu yang sedang tumbuh dalam diam. Menangislah — langit pun menangis sebelum pelangi lahir.",
+          author: "— Semesta Berkata Padamu",
+        },
+        {
+          text: "Perjalananmu tidak harus dimengerti oleh semua orang. Arah kompasku hanya perlu masuk akal untukmu — dan hati kecilmu sudah tahu jalannya.",
+          author: "— Dari Galaksi yang Memelukmu",
+        },
+        {
+          text: "Waktu yang kamu rasa membuang-buangmu sebenarnya sedang mempersiapkanmu. Musim dingin bukan akhir — ia adalah janji bahwa musim semi akan tiba jauh lebih indah.",
+          author: "— Surat dari Bintang",
+        },
+        {
+          text: "Kamu sudah melewati 100% hari terburuk dalam hidupmu sejauh ini. Kamu lebih kuat dari yang kamu sadari, dan lebih dicintai dari yang bisa kamu bayangkan.",
+          author: "— Selalu, Semesta",
+        },
+      ];
+
+      let usedIndices = [];
+      let shownCount = 0;
+
+      function showQuote() {
+        /* Reset jika semua kutipan sudah ditampilkan */
+        if (usedIndices.length === quotes.length) {
+          usedIndices = [];
+        }
+
+        /* Pilih indeks acak yang belum dipakai */
+        let idx;
+        do {
+          idx = Math.floor(Math.random() * quotes.length);
+        } while (usedIndices.includes(idx));
+
+        usedIndices.push(idx);
+        shownCount++;
+
+        const display = document.getElementById("quote-display");
+        const author = document.getElementById("quote-author");
+        const counter = document.getElementById("quoteCounter");
+
+        /* Animasi fade-out */
+        display.classList.remove("fade-in");
+        display.classList.add("fade-out");
+        author.classList.remove("visible");
+
+        setTimeout(() => {
+          /* Ganti isi teks */
+          display.textContent = quotes[idx].text;
+          author.textContent = quotes[idx].author;
+
+          /* Animasi fade-in */
+          display.classList.remove("fade-out");
+          display.classList.add("fade-in");
+
+          setTimeout(() => {
+            author.classList.add("visible");
+          }, 300);
+
+          /* Update counter */
+          counter.textContent = `✦ Pesan ke-${shownCount} dari semesta ✦`;
+        }, 500);
+      }
+
+      /* ============================================================
+       3. TOMBOL MUSIK — Play / Pause
+    ============================================================ */
+      const audio = document.getElementById("bgMusic");
+      const musicBtn = document.getElementById("musicBtn");
+      let isPlaying = false;
+
+      musicBtn.addEventListener("click", () => {
+        if (isPlaying) {
+          audio.pause();
+          musicBtn.classList.remove("playing");
+          musicBtn.querySelector(".icon").textContent = "🎵";
+          musicBtn.querySelector(".label").textContent = "Musik Semesta";
+        } else {
+          /* Autoplay sering diblokir browser; tampilkan info jika gagal */
+          audio.play().catch(() => {
+            musicBtn.querySelector(".label").textContent = "Klik sekali lagi ♪";
+          });
+          musicBtn.classList.add("playing");
+          musicBtn.querySelector(".icon").textContent = "🎶";
+          musicBtn.querySelector(".label").textContent = "Sedang Bermain...";
+        }
+        isPlaying = !isPlaying;
+      });
+
+      /* ============================================================
+       4. SCROLL REVEAL — Animasi elemen saat di-scroll
+    ============================================================ */
+      const revealEls = document.querySelectorAll(".reveal");
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              observer.unobserve(entry.target); /* Hanya sekali */
+            }
+          });
+        },
+        { threshold: 0.15 },
+      );
+
+      revealEls.forEach((el) => observer.observe(el));
+
+      /* ============================================================
+       5. BREATHING EXERCISE — Latihan Pernapasan 4-4-4
+    ============================================================ */
+      let breatheActive = false;
+      let breatheInterval = null;
+      const breatheInner = document.getElementById("breatheInner");
+      const breatheLabel = document.getElementById("breathe-label");
+      const breatheBtn = document.getElementById("breatheBtn");
+
+      /*
+      Pola napas: Tarik 4 detik → Tahan 4 detik → Buang 4 detik → Jeda 2 detik
+      Setiap fase punya kelas CSS yang berbeda untuk animasi.
+    */
+      const phases = [
+        { label: "Tarik Napas", cls: "expand", dur: 4000 },
+        { label: "Tahan", cls: "hold", dur: 4000 },
+        { label: "Buang Napas", cls: "shrink", dur: 4000 },
+        { label: "Istirahat", cls: "shrink", dur: 2000 },
+      ];
+
+      let phaseIdx = 0;
+
+      function runPhase() {
+        const phase = phases[phaseIdx];
+
+        /* Reset semua kelas fase, lalu tambah yang baru */
+        breatheInner.classList.remove("expand", "hold", "shrink");
+        void breatheInner.offsetWidth; /* Trigger reflow untuk restart transisi */
+        breatheInner.classList.add(phase.cls);
+        breatheLabel.textContent = phase.label;
+
+        /* Lanjut fase berikutnya */
+        breatheInterval = setTimeout(() => {
+          phaseIdx = (phaseIdx + 1) % phases.length;
+          if (breatheActive) runPhase();
+        }, phase.dur);
+      }
+
+      function toggleBreathe() {
+        breatheActive = !breatheActive;
+
+        if (breatheActive) {
+          phaseIdx = 0;
+          breatheBtn.textContent = "Hentikan Latihan";
+          runPhase();
+        } else {
+          clearTimeout(breatheInterval);
+          breatheInner.classList.remove("expand", "hold", "shrink");
+          breatheLabel.textContent = "Mulai";
+          breatheBtn.textContent = "Mulai Bernapas Bersama";
+        }
+      }
+    </script>
+  </body>
+</html>
